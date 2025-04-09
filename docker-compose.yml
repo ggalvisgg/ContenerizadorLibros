@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo_backups:/backup  # backup visible desde fuera
+
+  cronjob:
+    build: ./mongo-cron
+    container_name: mongo-backup
+    depends_on:
+      - mongodb
+    volumes:
+      - ./mongo_backups:/backup
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
