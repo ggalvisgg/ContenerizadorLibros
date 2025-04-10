@@ -15,7 +15,7 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
-      - ./mongo_backups:/backup  # backup visible desde fuera
+      - ./mongo_backups:/backup 
 
   cronjob:
     build: ./mongo-cron
