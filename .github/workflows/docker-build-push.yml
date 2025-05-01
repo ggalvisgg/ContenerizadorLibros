@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: gabrielagg07/ggalvisg
           tags: |
             type=sha,format=short
             type=raw,value=main
