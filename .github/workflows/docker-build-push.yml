@@ -29,10 +29,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          driver: docker-container  # ✅ habilita soporte para cache tipo GHA
+          images: gabrielagg07/ggalvisg
+          tags: |
+            type=sha,format=short
+            type=raw,value=main
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
