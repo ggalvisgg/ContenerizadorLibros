@@ -1,95 +1,3 @@
-# name: Docker Build, Test and Push
-
-# on:
-#   push:
-#     branches: [main]
-#   pull_request:
-#     branches: [main]
-
-# env:
-#   IMAGE_NAME: gabrielagg07/ggalvisg
-
-# jobs:
-#   build-test-and-push:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
-
-#       - name: Run unit tests
-#         run: |
-#           echo "Running unit tests..."
-#           go test ./... -v -run ^TestBookController$ ./controllers/book_controller_test.go
-
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@v2
-#         with:
-#           driver: docker-container
-
-#       - name: Log in to Docker Hub
-#         uses: docker/login-action@v2
-#         with:
-#           username: ${{ secrets.DOCKER_USERNAME }}
-#           password: ${{ secrets.DOCKER_PASSWORD }}
-
-#       - name: Docker metadata
-#         id: meta
-#         uses: docker/metadata-action@v4
-#         with:
-#           images: ${{ env.IMAGE_NAME }}
-#           tags: |
-#             type=sha
-#             type=raw,value=main
-#           labels: |
-#             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-#             org.opencontainers.image.revision=${{ github.sha }}
-
-#       - name: Build and push Docker image
-#         uses: docker/build-push-action@v4
-#         with:
-#           context: .
-#           push: true
-#           tags: ${{ steps.meta.outputs.tags }}
-#           labels: ${{ steps.meta.outputs.labels }}
-#           cache-from: type=gha
-#           cache-to: type=gha,mode=max
-
-#       - name: Run integration tests
-#         run: |
-#           echo "Running integration tests..."
-#           go test ./... -v -run ^TestBookControllerIntegration$ ./controllers/book_controller_integration_test.go
-
-#       - name: Docker Scout (vulnerabilities)
-#         id: docker-scout
-#         if: ${{ github.event_name == 'pull_request' }}
-#         uses: docker/scout-action@v1
-#         with:
-#           command: compare
-#           image: ${{ steps.meta.outputs.tags }}
-#           to: ${{ env.IMAGE_NAME }}:latest
-#           ignore-unchanged: true
-#           only-severities: critical,high
-#           write-comment: true
-#           github-token: ${{ secrets.SECRET }}
-
-#   run-locally:
-#     name: Run container locally (self-hosted)
-#     runs-on: self-hosted
-#     needs: build-test-and-push
-
-#     steps:
-#       - name: Pull Docker image
-#         run: docker pull gabrielagg07/ggalvisg:main
-
-#       - name: Stop and remove existing container (if any)
-#         run: |
-#           docker stop libros-container || true
-#           docker rm libros-container || true
-
-#       - name: Run Docker container
-#         run: docker run -d --name libros-container -p 8080:8080 gabrielagg07/ggalvisg:main
-
 name: Docker Build, Test, Push and Run
 
 on:
@@ -117,7 +25,7 @@ jobs:
           go-version: 1.20
 
       - name: Run unit tests
-        run: go test ./... -v -cover -run ^TestBookController$ ./controllers/book_controller_test.go
+        run: go test ./... -v -cover -run ^TestBookController$
 
   # CONSTRUIR Y SUBIR IMAGEN
   build-test-and-push:
@@ -163,7 +71,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run integration tests
-        run: go test ./... -v -run ^TestBookControllerIntegration$ ./controllers/book_controller_integration_test.go
+        run: go test ./... -v -run ^TestBookControllerIntegration$
 
       - name: Docker Scout
         if: ${{ github.event_name == 'pull_request' }}
