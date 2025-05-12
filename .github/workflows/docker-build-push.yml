@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    
+
 permissions:
   contents: write
 
@@ -13,6 +13,26 @@ env:
   IMAGE_NAME: gabrielagg07/ggalvisg
 
 jobs:
+
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Stop any existing containers
+      run: |
+        docker compose down || true
+
+    - name: Build and start services with Docker Compose
+      run: |
+        docker compose up --build -d
+
+    - name: Check running containers
+      run: |
+        docker ps
+
   build-test-and-push:
     runs-on: ubuntu-latest
 
@@ -93,8 +113,7 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          # Puedes ajustar esta lógica según lo que quieras
-          VERSION="v$(date +'%Y.%m.%d')-build$(git rev-list --count HEAD)"
+          VERSION="v$(date +'%Y.%m.%d')-V$(git rev-list --count HEAD)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           git tag $VERSION
           git push origin $VERSION
