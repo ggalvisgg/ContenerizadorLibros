@@ -115,7 +115,7 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          VERSION="v$(date +'%Y.%m.%d')-buildV$(git rev-list --count HEAD)"
+          VERSION="v$(date +'%Y.%m.%d')-buildVer$(git rev-list --count HEAD)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           if ! git rev-parse "$VERSION" >/dev/null 2>&1; then
