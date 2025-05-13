@@ -123,6 +123,7 @@ jobs:
             git push origin $VERSION
           else
             echo "Tag $VERSION already exists. Skipping tag creation."
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
