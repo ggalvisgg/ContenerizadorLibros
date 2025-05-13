@@ -115,8 +115,12 @@ jobs:
         run: |
           VERSION="v$(date +'%Y.%m.%d')-V$(git rev-list --count HEAD)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          git tag $VERSION
-          git push origin $VERSION
+           if ! git rev-parse "$VERSION" >/dev/null 2>&1; then
+             git tag $VERSION
+             git push origin $VERSION
+           else
+             echo "Tag $VERSION already exists. Skipping tag creation."
+           fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
