@@ -100,6 +100,8 @@ jobs:
     needs: build-test-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
 
     steps:
       - name: Checkout repo
@@ -115,12 +117,12 @@ jobs:
         run: |
           VERSION="v$(date +'%Y.%m.%d')-buildV$(git rev-list --count HEAD)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-           if ! git rev-parse "$VERSION" >/dev/null 2>&1; then
-             git tag $VERSION
-             git push origin $VERSION
-           else
-             echo "Tag $VERSION already exists. Skipping tag creation."
-           fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if ! git rev-parse "$VERSION" >/dev/null 2>&1; then
+            git tag $VERSION
+            git push origin $VERSION
+          else
+            echo "Tag $VERSION already exists. Skipping tag creation."
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -152,4 +154,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: gabrielagg07/ggalvisg:${{ env.VERSION }}
+          tags: gabrielagg07/ggalvisg:${{ needs.release.outputs.version }}
